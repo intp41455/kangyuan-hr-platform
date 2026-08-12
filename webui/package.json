@@ -1,0 +1,27 @@
+{
+  "name": "kangyuan-hr-webui",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "康源智慧人资平台前端 - 钉钉H5嵌入",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "antd": "^5.21.0",
+    "@ant-design/icons": "^5.5.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.0",
+    "dayjs": "^1.11.13",
+    "echarts": "^5.5.1",
+    "echarts-for-react": "^3.0.2",
+    "dingtalk-jsapi": "^2.15.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.0"
+  }
+}

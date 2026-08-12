@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+dist/
+build/
+.vite/
+.vercel/
+.netlify/
+
+# Temporary analysis files (contain WeChat/DingTalk raw data)
+_tmp_*
+_tmp_*.json
+_tmp_*.txt
+
+# WeChat / DingTalk raw exports (private data)
+xwechat_files/
+wechat_files/
+dingtalk_export/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Env / Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Misc
+.cache/
+*.tmp
+*.bak
