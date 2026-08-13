@@ -2,35 +2,38 @@
 import React, { useMemo } from 'react'
 import { Row, Col, Card, Typography } from 'antd'
 import ReactECharts from 'echarts-for-react'
-import * as echarts from 'echarts'
+import * as echarts from 'echarts/core'
+import { BarChart, RadarChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent, LegendComponent, RadarComponent } from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
 import { BRAND_COLORS } from '../../theme.js'
 import { BU_BREAKDOWN } from '../../mock/data.js'
 import { getCurrentUser } from '../../mock/auth.js'
 
+echarts.use([BarChart, RadarChart, GridComponent, TooltipComponent, LegendComponent, RadarComponent, CanvasRenderer])
+
 const { Title, Text } = Typography
 
-// 卡片统一样式：圆角 12px、内边距 24px
 const cardStyle = { borderRadius: 12 }
 const cardBodyStyle = { padding: 24 }
 
 export default function BUCompare() {
   const user = getCurrentUser()
 
-  // 板块对比雷达图：6 维度归一化至 0-100（越高越好）
   const radarOption = useMemo(() => {
     const maxEmp = Math.max(...BU_BREAKDOWN.map(b => b.employees))
     const maxCost = Math.max(...BU_BREAKDOWN.map(b => b.monthlyCost))
     const maxAvg = Math.max(...BU_BREAKDOWN.map(b => b.avgSalary))
     const maxAnom = Math.max(...BU_BREAKDOWN.map(b => b.monthlyAnomaly))
-    const prodBase = maxEmp / maxAnom // 人均产能代理基准（最高分）
+    const prodBase = maxEmp / maxAnom
 
     const dims = (b) => [
-      +(b.employees / maxEmp * 100).toFixed(1),                            // 员工规模
-      +(b.monthlyCost / maxCost * 100).toFixed(1),                         // 月度成本
-      +(b.avgSalary / maxAvg * 100).toFixed(1),                            // 均薪水平
-      +((1 - b.monthlyAnomaly / (maxAnom * 1.5)) * 100).toFixed(1),        // 异常率（控制度，越高越好）
-      +(b.employees / b.monthlyAnomaly / prodBase * 100).toFixed(1),       // 人均产能（代理：人均异常稳定性）
-      +(100 - b.monthlyAnomaly * 2).toFixed(1)                             // 合规率（代理）
+      +(b.employees / maxEmp * 100).toFixed(1),
+      +(b.monthlyCost / maxCost * 100).toFixed(1),
+      +(b.avgSalary / maxAvg * 100).toFixed(1),
+      +((1 - b.monthlyAnomaly / (maxAnom * 1.5)) * 100).toFixed(1),
+      +(b.employees / b.monthlyAnomaly / prodBase * 100).toFixed(1),
+      +(100 - b.monthlyAnomaly * 2).toFixed(1)
     ]
 
     return {
@@ -66,7 +69,6 @@ export default function BUCompare() {
     }
   }, [])
 
-  // 板块均薪对比横向柱状图（升序，最高在顶部）
   const salaryBarOption = useMemo(() => {
     const sorted = [...BU_BREAKDOWN].sort((a, b) => a.avgSalary - b.avgSalary)
     return {
@@ -115,7 +117,6 @@ export default function BUCompare() {
         <Text type="secondary">高管驾驶舱{user?.name ? ` · 欢迎，${user.name}` : ''}</Text>
       </div>
 
-      {/* 顶部三板块卡片，左侧 8px 板块色边条 */}
       <Row gutter={16}>
         {BU_BREAKDOWN.map(b => (
           <Col xs={24} lg={8} key={b.code}>
@@ -161,7 +162,6 @@ export default function BUCompare() {
         ))}
       </Row>
 
-      {/* 雷达图 + 均薪柱状图 */}
       <Row gutter={16}>
         <Col xs={24} lg={14}>
           <Card title="板块对比雷达图" style={cardStyle} bodyStyle={cardBodyStyle}>

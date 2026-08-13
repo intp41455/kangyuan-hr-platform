@@ -1,49 +1,50 @@
-import React from 'react'
+import React, { Suspense, lazy } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { Spin } from 'antd'
 import MainLayout from './layouts/MainLayout.jsx'
 import LoginPage from './pages/Login.jsx'
 
-// HR 管理后台
-import HREmployees from './pages/hr/Employees.jsx'
-import HRPayroll from './pages/hr/Payroll.jsx'
-import HRAnomalies from './pages/hr/Anomalies.jsx'
-import HRRules from './pages/hr/Rules.jsx'
+// 路由懒加载：首次只加载登录页，其他页面按需加载
+const HREmployees = lazy(() => import('./pages/hr/Employees.jsx'))
+const HRPayroll = lazy(() => import('./pages/hr/Payroll.jsx'))
+const HRAnomalies = lazy(() => import('./pages/hr/Anomalies.jsx'))
+const HRRules = lazy(() => import('./pages/hr/Rules.jsx'))
 
-// 高管驾驶舱
-import DashboardOverview from './pages/dashboard/Overview.jsx'
-import DashboardBU from './pages/dashboard/BUCompare.jsx'
-import DashboardCompliance from './pages/dashboard/Compliance.jsx'
+const DashboardOverview = lazy(() => import('./pages/dashboard/Overview.jsx'))
+const DashboardBU = lazy(() => import('./pages/dashboard/BUCompare.jsx'))
+const DashboardCompliance = lazy(() => import('./pages/dashboard/Compliance.jsx'))
 
-// 员工自助
-import SelfHome from './pages/self/Home.jsx'
-import SelfPayslip from './pages/self/Payslip.jsx'
-import SelfLeave from './pages/self/Leave.jsx'
-import SelfAttendance from './pages/self/Attendance.jsx'
+const SelfHome = lazy(() => import('./pages/self/Home.jsx'))
+const SelfPayslip = lazy(() => import('./pages/self/Payslip.jsx'))
+const SelfLeave = lazy(() => import('./pages/self/Leave.jsx'))
+const SelfAttendance = lazy(() => import('./pages/self/Attendance.jsx'))
+
+const PageLoading = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+    <Spin size="large" tip="加载中..." />
+  </div>
+)
 
 export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route element={<MainLayout />}>
-        {/* 默认重定向 */}
         <Route index element={<Navigate to="/self" replace />} />
 
-        {/* 员工自助 */}
-        <Route path="/self" element={<SelfHome />} />
-        <Route path="/self/payslip" element={<SelfPayslip />} />
-        <Route path="/self/leave" element={<SelfLeave />} />
-        <Route path="/self/attendance" element={<SelfAttendance />} />
+        <Route path="/self" element={<Suspense fallback={<PageLoading />}><SelfHome /></Suspense>} />
+        <Route path="/self/payslip" element={<Suspense fallback={<PageLoading />}><SelfPayslip /></Suspense>} />
+        <Route path="/self/leave" element={<Suspense fallback={<PageLoading />}><SelfLeave /></Suspense>} />
+        <Route path="/self/attendance" element={<Suspense fallback={<PageLoading />}><SelfAttendance /></Suspense>} />
 
-        {/* HR 管理 */}
-        <Route path="/hr/employees" element={<HREmployees />} />
-        <Route path="/hr/payroll" element={<HRPayroll />} />
-        <Route path="/hr/anomalies" element={<HRAnomalies />} />
-        <Route path="/hr/rules" element={<HRRules />} />
+        <Route path="/hr/employees" element={<Suspense fallback={<PageLoading />}><HREmployees /></Suspense>} />
+        <Route path="/hr/payroll" element={<Suspense fallback={<PageLoading />}><HRPayroll /></Suspense>} />
+        <Route path="/hr/anomalies" element={<Suspense fallback={<PageLoading />}><HRAnomalies /></Suspense>} />
+        <Route path="/hr/rules" element={<Suspense fallback={<PageLoading />}><HRRules /></Suspense>} />
 
-        {/* 高管驾驶舱 */}
-        <Route path="/dashboard/overview" element={<DashboardOverview />} />
-        <Route path="/dashboard/bu" element={<DashboardBU />} />
-        <Route path="/dashboard/compliance" element={<DashboardCompliance />} />
+        <Route path="/dashboard/overview" element={<Suspense fallback={<PageLoading />}><DashboardOverview /></Suspense>} />
+        <Route path="/dashboard/bu" element={<Suspense fallback={<PageLoading />}><DashboardBU /></Suspense>} />
+        <Route path="/dashboard/compliance" element={<Suspense fallback={<PageLoading />}><DashboardCompliance /></Suspense>} />
       </Route>
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

@@ -2,21 +2,24 @@
 import React, { useMemo } from 'react'
 import { Row, Col, Card, Statistic, Progress, Typography } from 'antd'
 import ReactECharts from 'echarts-for-react'
-import * as echarts from 'echarts'
+import * as echarts from 'echarts/core'
+import { BarChart, PieChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
 import { BRAND_COLORS } from '../../theme.js'
 import { KPIS, BU_BREAKDOWN, MONTHLY_COST_TREND, RULES } from '../../mock/data.js'
 import { getCurrentUser } from '../../mock/auth.js'
 
+echarts.use([BarChart, PieChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer])
+
 const { Title, Text } = Typography
 
-// 卡片统一样式：圆角 12px、内边距 24px
 const cardStyle = { borderRadius: 12 }
 const cardBodyStyle = { padding: 24 }
 
 export default function Overview() {
   const user = getCurrentUser()
 
-  // 月度人力成本趋势 - 堆叠柱状图（美宏橙 / 福祉蓝 / 耆祥绿）
   const trendOption = useMemo(() => ({
     color: [BRAND_COLORS.BU_MEIHONG, BRAND_COLORS.BU_FUZHI_EDU, BRAND_COLORS.BU_QIXIANG],
     tooltip: {
@@ -50,7 +53,6 @@ export default function Overview() {
     ]
   }), [])
 
-  // 三板块员工规模占比 - 环形图
   const pieOption = useMemo(() => ({
     color: [BRAND_COLORS.BU_MEIHONG, BRAND_COLORS.BU_FUZHI_EDU, BRAND_COLORS.BU_QIXIANG],
     tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
@@ -66,11 +68,9 @@ export default function Overview() {
     }]
   }), [])
 
-  // 规则合规率 = OK 规则数 / 规则总数
   const okCount = RULES.filter(r => r.risk === 'OK').length
   const complianceRate = +(okCount / RULES.length * 100).toFixed(2)
 
-  // 关键指标健康度（6 项），goodness 为健康度（满分 100，越高越好）
   const healthMetrics = [
     { name: '核算准确率', display: `${KPIS.payrollAccuracy.toFixed(2)}%`, goodness: KPIS.payrollAccuracy },
     { name: '自助确认率', display: `${KPIS.selfConfirmRate.toFixed(1)}%`, goodness: KPIS.selfConfirmRate },
@@ -80,7 +80,6 @@ export default function Overview() {
     { name: '规则合规率', display: `${complianceRate}%`, goodness: complianceRate }
   ]
 
-  // 健康度配色：>=95 绿 / >=80 橙 / 否则红
   const healthColor = (g) => g >= 95 ? BRAND_COLORS.SUCCESS : (g >= 80 ? BRAND_COLORS.WARNING : BRAND_COLORS.ERROR)
 
   return (
@@ -90,7 +89,6 @@ export default function Overview() {
         <Text type="secondary">高管驾驶舱{user?.name ? ` · 欢迎，${user.name}` : ''}</Text>
       </div>
 
-      {/* 顶部 4 个 KPI 卡片，每卡片占 6 列 */}
       <Row gutter={16}>
         <Col xs={24} sm={12} lg={6}>
           <Card style={cardStyle} bodyStyle={cardBodyStyle}>
@@ -138,7 +136,6 @@ export default function Overview() {
         </Col>
       </Row>
 
-      {/* 图表区：月度趋势（堆叠柱状）+ 板块占比（环形） */}
       <Row gutter={16}>
         <Col xs={24} lg={16}>
           <Card title="月度人力成本趋势" style={cardStyle} bodyStyle={cardBodyStyle}>
@@ -152,7 +149,6 @@ export default function Overview() {
         </Col>
       </Row>
 
-      {/* 关键指标健康度：6 项半圆形仪表盘 */}
       <Card title="关键指标健康度" style={cardStyle} bodyStyle={cardBodyStyle}>
         <Row gutter={[16, 24]}>
           {healthMetrics.map(m => (
