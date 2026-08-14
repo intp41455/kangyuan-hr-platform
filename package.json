@@ -6,7 +6,16 @@
   "scripts": {
     "test": "node tests/test_payroll_anomaly_engine.js"
   },
-  "keywords": ["hr", "payroll", "anomaly-detection"],
+  "keywords": [
+    "hr",
+    "payroll",
+    "anomaly-detection"
+  ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/node": "^3.2.29",
+    "dayjs": "^1.11.21",
+    "express": "^4.19.2"
+  }
 }
